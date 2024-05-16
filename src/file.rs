@@ -62,8 +62,8 @@ impl File {
 
     /// Convert this `File` into a `usize` from 0 to 7 inclusive.
     #[inline]
-    pub fn to_index(&self) -> usize {
-        *self as usize
+    pub fn to_index(self) -> usize {
+        self as usize
     }
 }
 
@@ -71,7 +71,7 @@ impl FromStr for File {
     type Err = Error;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s.len() < 1 {
+        if s.is_empty() {
             return Err(Error::InvalidFile);
         }
         match s.chars().next().unwrap() {

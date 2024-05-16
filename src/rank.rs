@@ -63,8 +63,8 @@ impl Rank {
 
     /// Convert this `Rank` into a `usize` between 0 and 7 (inclusive).
     #[inline]
-    pub fn to_index(&self) -> usize {
-        *self as usize
+    pub fn to_index(self) -> usize {
+        self as usize
     }
 }
 
@@ -72,7 +72,7 @@ impl FromStr for Rank {
     type Err = Error;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s.len() < 1 {
+        if s.is_empty() {
             return Err(Error::InvalidRank);
         }
         match s.chars().next().unwrap() {

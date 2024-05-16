@@ -113,9 +113,9 @@ impl BoardBuilder {
     ) -> BoardBuilder {
         let mut result = BoardBuilder {
             pieces: [None; 64],
-            side_to_move: side_to_move,
+            side_to_move,
             castle_rights: [white_castle_rights, black_castle_rights],
-            en_passant: en_passant,
+            en_passant,
         };
 
         for piece in pieces.into_iter() {
@@ -179,7 +179,7 @@ impl BoardBuilder {
     /// let mut bb = BoardBuilder::new();
     /// bb.side_to_move(Color::Black);
     /// ```
-    pub fn side_to_move<'a>(&'a mut self, color: Color) -> &'a mut Self {
+    pub fn side_to_move(&mut self, color: Color) -> &mut Self {
         self.side_to_move = color;
         self
     }
@@ -196,11 +196,7 @@ impl BoardBuilder {
     /// let mut bb = BoardBuilder::new();
     /// bb.castle_rights(Color::Black, CastleRights::Both);
     /// ```
-    pub fn castle_rights<'a>(
-        &'a mut self,
-        color: Color,
-        castle_rights: CastleRights,
-    ) -> &'a mut Self {
+    pub fn castle_rights(&mut self, color: Color, castle_rights: CastleRights) -> &mut Self {
         self.castle_rights[color.to_index()] = castle_rights;
         self
     }
@@ -222,7 +218,7 @@ impl BoardBuilder {
     /// let mut bb = BoardBuilder::new();
     /// bb.piece(Square::A8, Piece::Rook, Color::Black);
     /// ```
-    pub fn piece<'a>(&'a mut self, square: Square, piece: Piece, color: Color) -> &'a mut Self {
+    pub fn piece(&mut self, square: Square, piece: Piece, color: Color) -> &mut Self {
         self[square] = Some((piece, color));
         self
     }
@@ -239,7 +235,7 @@ impl BoardBuilder {
     /// let mut bb: BoardBuilder = Board::default().into();
     /// bb.clear_square(Square::A1);
     /// ```
-    pub fn clear_square<'a>(&'a mut self, square: Square) -> &'a mut Self {
+    pub fn clear_square(&mut self, square: Square) -> &mut Self {
         self[square] = None;
         self
     }
@@ -255,7 +251,7 @@ impl BoardBuilder {
     ///              .piece(Square::E4, Piece::Pawn, Color::White)
     ///              .en_passant(Some(File::E));
     /// ```
-    pub fn en_passant<'a>(&'a mut self, file: Option<File>) -> &'a mut Self {
+    pub fn en_passant(&mut self, file: Option<File>) -> &mut Self {
         self.en_passant = file;
         self
     }
@@ -264,13 +260,13 @@ impl BoardBuilder {
 impl Index<Square> for BoardBuilder {
     type Output = Option<(Piece, Color)>;
 
-    fn index<'a>(&'a self, index: Square) -> &'a Self::Output {
+    fn index(&self, index: Square) -> &Self::Output {
         &self.pieces[index.to_index()]
     }
 }
 
 impl IndexMut<Square> for BoardBuilder {
-    fn index_mut<'a>(&'a mut self, index: Square) -> &'a mut Self::Output {
+    fn index_mut(&mut self, index: Square) -> &mut Self::Output {
         &mut self.pieces[index.to_index()]
     }
 }
@@ -452,27 +448,27 @@ impl FromStr for BoardBuilder {
             }
         }
 
-        if castles.contains("K") && castles.contains("Q") {
+        if castles.contains('K') && castles.contains('Q') {
             fen.castle_rights[Color::White.to_index()] = CastleRights::Both;
-        } else if castles.contains("K") {
+        } else if castles.contains('K') {
             fen.castle_rights[Color::White.to_index()] = CastleRights::KingSide;
-        } else if castles.contains("Q") {
+        } else if castles.contains('Q') {
             fen.castle_rights[Color::White.to_index()] = CastleRights::QueenSide;
         } else {
             fen.castle_rights[Color::White.to_index()] = CastleRights::NoRights;
         }
 
-        if castles.contains("k") && castles.contains("q") {
+        if castles.contains('k') && castles.contains('q') {
             fen.castle_rights[Color::Black.to_index()] = CastleRights::Both;
-        } else if castles.contains("k") {
+        } else if castles.contains('k') {
             fen.castle_rights[Color::Black.to_index()] = CastleRights::KingSide;
-        } else if castles.contains("q") {
+        } else if castles.contains('q') {
             fen.castle_rights[Color::Black.to_index()] = CastleRights::QueenSide;
         } else {
             fen.castle_rights[Color::Black.to_index()] = CastleRights::NoRights;
         }
 
-        if let Ok(sq) = Square::from_str(&ep) {
+        if let Ok(sq) = Square::from_str(ep) {
             fen = fen.en_passant(Some(sq.get_file()));
         }
 

@@ -87,41 +87,45 @@ pub fn gen_dest_double_moves() -> BitBoard {
 
 // Write the PAWN_MOVES array to the specified file.
 pub fn write_pawn_moves(f: &mut File) {
-    write!(f, "const PAWN_MOVES: [[BitBoard; 64]; 2] = [[\n").unwrap();
-    for i in 0..2 {
-        for j in 0..64 {
-            unsafe { write!(f, "    BitBoard({}),\n", PAWN_MOVES[i][j].0).unwrap() };
-        }
-        if i != 1 {
-            write!(f, "  ], [\n").unwrap();
+    writeln!(f, "const PAWN_MOVES: [[BitBoard; 64]; 2] = [[").unwrap();
+    unsafe {
+        for (i, pawn_move) in PAWN_MOVES.iter().enumerate() {
+            for bitboard in pawn_move {
+                writeln!(f, "    BitBoard({}),", bitboard.0).unwrap();
+            }
+            if i != 1 {
+                writeln!(f, "  ], [").unwrap();
+            }
         }
     }
-    write!(f, "]];\n").unwrap();
+    writeln!(f, "]];").unwrap();
 }
 
 // Write the PAWN_ATTACKS array to the specified file.
 pub fn write_pawn_attacks(f: &mut File) {
-    write!(f, "const PAWN_ATTACKS: [[BitBoard; 64]; 2] = [[\n").unwrap();
-    for i in 0..2 {
-        for j in 0..64 {
-            unsafe { write!(f, "    BitBoard({}),\n", PAWN_ATTACKS[i][j].0).unwrap() };
-        }
-        if i != 1 {
-            write!(f, "  ], [\n").unwrap();
+    writeln!(f, "const PAWN_ATTACKS: [[BitBoard; 64]; 2] = [[").unwrap();
+    unsafe {
+        for (i, pawn_attack) in PAWN_ATTACKS.iter().enumerate() {
+            for bitborad in pawn_attack {
+                writeln!(f, "    BitBoard({}),", bitborad.0).unwrap();
+            }
+            if i != 1 {
+                writeln!(f, "  ], [").unwrap();
+            }
         }
     }
-    write!(f, "]];\n").unwrap();
+    writeln!(f, "]];").unwrap();
 
-    write!(
+    writeln!(
         f,
-        "const PAWN_SOURCE_DOUBLE_MOVES: BitBoard = BitBoard({0});\n",
+        "const PAWN_SOURCE_DOUBLE_MOVES: BitBoard = BitBoard({0});",
         gen_source_double_moves().0
     )
     .unwrap();
 
-    write!(
+    writeln!(
         f,
-        "const PAWN_DEST_DOUBLE_MOVES: BitBoard = BitBoard({0});\n",
+        "const PAWN_DEST_DOUBLE_MOVES: BitBoard = BitBoard({0});",
         gen_dest_double_moves().0
     )
     .unwrap();

@@ -2,6 +2,7 @@ use failure::Fail;
 
 /// Sometimes, bad stuff happens.
 #[derive(Clone, Debug, Fail)]
+#[allow(clippy::enum_variant_names)]
 pub enum Error {
     /// The FEN string is invalid
     #[fail(display = "Invalid FEN string: {}", fen)]

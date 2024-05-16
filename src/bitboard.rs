@@ -262,7 +262,7 @@ impl fmt::Display for BitBoard {
                 s.push_str(". ");
             }
             if x % 8 == 7 {
-                s.push_str("\n");
+                s.push('\n');
             }
         }
         write!(f, "{}", s)
@@ -291,12 +291,12 @@ impl BitBoard {
     /// Convert an `Option<Square>` to an `Option<BitBoard>`
     #[inline]
     pub fn from_maybe_square(sq: Option<Square>) -> Option<BitBoard> {
-        sq.map(|s| BitBoard::from_square(s))
+        sq.map(BitBoard::from_square)
     }
 
     /// Convert a `BitBoard` to a `Square`.  This grabs the least-significant `Square`
     #[inline]
-    pub fn to_square(&self) -> Square {
+    pub fn to_square(self) -> Square {
         Square::new(self.0.trailing_zeros() as u8)
     }
 
@@ -314,7 +314,7 @@ impl BitBoard {
 
     /// Convert this `BitBoard` to a `usize` (for table lookups)
     #[inline]
-    pub fn to_size(&self, rightshift: u8) -> usize {
+    pub fn to_size(self, rightshift: u8) -> usize {
         (self.0 >> rightshift) as usize
     }
 }

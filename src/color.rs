@@ -16,15 +16,15 @@ pub const ALL_COLORS: [Color; NUM_COLORS] = [Color::White, Color::Black];
 impl Color {
     /// Convert the `Color` to a `usize` for table lookups.
     #[inline]
-    pub fn to_index(&self) -> usize {
-        *self as usize
+    pub fn to_index(self) -> usize {
+        self as usize
     }
 
     /// Convert a `Color` to my backrank, which represents the starting rank
     /// for my pieces.
     #[inline]
-    pub fn to_my_backrank(&self) -> Rank {
-        match *self {
+    pub fn to_my_backrank(self) -> Rank {
+        match self {
             Color::White => Rank::First,
             Color::Black => Rank::Eighth,
         }
@@ -33,8 +33,8 @@ impl Color {
     /// Convert a `Color` to my opponents backrank, which represents the starting rank for the
     /// opponents pieces.
     #[inline]
-    pub fn to_their_backrank(&self) -> Rank {
-        match *self {
+    pub fn to_their_backrank(self) -> Rank {
+        match self {
             Color::White => Rank::Eighth,
             Color::Black => Rank::First,
         }
@@ -42,8 +42,8 @@ impl Color {
 
     /// Convert a `Color` to my second rank, which represents the starting rank for my pawns.
     #[inline]
-    pub fn to_second_rank(&self) -> Rank {
-        match *self {
+    pub fn to_second_rank(self) -> Rank {
+        match self {
             Color::White => Rank::Second,
             Color::Black => Rank::Seventh,
         }
@@ -52,8 +52,8 @@ impl Color {
     /// Convert a `Color` to my fourth rank, which represents the rank of my pawns when
     /// moving two squares forward.
     #[inline]
-    pub fn to_fourth_rank(&self) -> Rank {
-        match *self {
+    pub fn to_fourth_rank(self) -> Rank {
+        match self {
             Color::White => Rank::Fourth,
             Color::Black => Rank::Fifth,
         }
@@ -61,8 +61,8 @@ impl Color {
 
     /// Convert a `Color` to my seventh rank, which represents the rank before pawn promotion.
     #[inline]
-    pub fn to_seventh_rank(&self) -> Rank {
-        match *self {
+    pub fn to_seventh_rank(self) -> Rank {
+        match self {
             Color::White => Rank::Seventh,
             Color::Black => Rank::Second,
         }

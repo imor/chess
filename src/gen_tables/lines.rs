@@ -48,14 +48,16 @@ pub fn gen_lines() {
 
 // Write the LINE array to the specified file.
 pub fn write_lines(f: &mut File) {
-    write!(f, "const LINE: [[BitBoard; 64]; 64] = [[\n").unwrap();
-    for i in 0..64 {
-        for j in 0..64 {
-            unsafe { write!(f, "    BitBoard({}),\n", LINE[i][j].0).unwrap() };
-        }
-        if i != 63 {
-            write!(f, "  ], [\n").unwrap();
+    writeln!(f, "const LINE: [[BitBoard; 64]; 64] = [[").unwrap();
+    unsafe {
+        for (i, line) in LINE.iter().enumerate() {
+            for bitboard in line {
+                writeln!(f, "    BitBoard({}),", bitboard.0).unwrap();
+            }
+            if i != 63 {
+                writeln!(f, "  ], [").unwrap();
+            }
         }
     }
-    write!(f, "]];\n").unwrap();
+    writeln!(f, "]];").unwrap();
 }

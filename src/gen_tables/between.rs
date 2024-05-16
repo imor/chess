@@ -59,14 +59,16 @@ pub fn gen_between() {
 
 // Write the BETWEEN array to the specified file.
 pub fn write_between(f: &mut File) {
-    write!(f, "const BETWEEN: [[BitBoard; 64]; 64] = [[\n").unwrap();
-    for i in 0..64 {
-        for j in 0..64 {
-            unsafe { write!(f, "    BitBoard({}),\n", BETWEEN[i][j].0).unwrap() };
-        }
-        if i != 63 {
-            write!(f, "  ], [\n").unwrap();
+    writeln!(f, "const BETWEEN: [[BitBoard; 64]; 64] = [[").unwrap();
+    unsafe {
+        for (i, between) in BETWEEN.iter().enumerate() {
+            for bitboard in between {
+                writeln!(f, "    BitBoard({}),", bitboard.0).unwrap();
+            }
+            if i != 63 {
+                writeln!(f, "  ], [").unwrap();
+            }
         }
     }
-    write!(f, "]];\n").unwrap();
+    writeln!(f, "]];").unwrap();
 }

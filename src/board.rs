@@ -17,7 +17,6 @@ use crate::zobrist::Zobrist;
 use std::convert::{TryFrom, TryInto};
 use std::fmt;
 use std::hash::{Hash, Hasher};
-use std::mem;
 use std::str::FromStr;
 
 /// A representation of a chess board.  That's why you're here, right?
@@ -155,7 +154,7 @@ impl Board {
     /// ```
     #[inline]
     pub fn status(&self) -> BoardStatus {
-        let moves = MoveGen::new_legal(&self).len();
+        let moves = MoveGen::new_legal(self).len();
         match moves {
             0 => {
                 if self.checkers == EMPTY {
@@ -589,10 +588,8 @@ impl Board {
         // make sure there is no square with multiple pieces on it
         for x in ALL_PIECES.iter() {
             for y in ALL_PIECES.iter() {
-                if *x != *y {
-                    if self.pieces(*x) & self.pieces(*y) != EMPTY {
-                        return false;
-                    }
+                if *x != *y && self.pieces(*x) & self.pieces(*y) != EMPTY {
+                    return false;
                 }
             }
         }
@@ -661,12 +658,11 @@ impl Board {
             }
             // if we have castle rights, make sure we have a king on the (E, {1,8}) square,
             // depending on the color
-            if castle_rights != CastleRights::NoRights {
-                if self.pieces(Piece::King) & self.color_combined(*color)
+            if castle_rights != CastleRights::NoRights
+                && self.pieces(Piece::King) & self.color_combined(*color)
                     != get_file(File::E) & get_rank(color.to_my_backrank())
-                {
-                    return false;
-                }
+            {
+                return false;
             }
         }
 
@@ -676,7 +672,7 @@ impl Board {
         }
 
         // it checks out
-        return true;
+        true
     }
 
     /// Get a hash of the board.
@@ -745,14 +741,12 @@ impl Board {
                 } else {
                     Some(Piece::Bishop)
                 }
+            } else if self.pieces(Piece::Rook) & opp != EMPTY {
+                Some(Piece::Rook)
+            } else if self.pieces(Piece::Queen) & opp != EMPTY {
+                Some(Piece::Queen)
             } else {
-                if self.pieces(Piece::Rook) & opp != EMPTY {
-                    Some(Piece::Rook)
-                } else if self.pieces(Piece::Queen) & opp != EMPTY {
-                    Some(Piece::Queen)
-                } else {
-                    Some(Piece::King)
-                }
+                Some(Piece::King)
             }
         }
     }
@@ -842,7 +836,7 @@ impl Board {
     /// ```
     #[inline]
     pub fn legal(&self, m: ChessMove) -> bool {
-        MoveGen::new_legal(&self).find(|x| *x == m).is_some()
+        MoveGen::new_legal(self).any(|x| x == m)
     }
 
     /// Make a chess move onto a new board.
@@ -1212,7 +1206,7 @@ impl FromStr for Board {
     type Err = Error;
 
     fn from_str(value: &str) -> Result<Self, Self::Err> {
-        Ok(BoardBuilder::from_str(value)?.try_into()?)
+        BoardBuilder::from_str(value)?.try_into()
     }
 }
 

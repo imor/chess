@@ -11,7 +11,7 @@ use std::fmt;
 use std::str::FromStr;
 
 /// Represent a ChessMove in memory
-#[derive(Clone, Copy, Eq, PartialOrd, PartialEq, Default, Debug, Hash)]
+#[derive(Clone, Copy, Eq, PartialEq, Default, Debug, Hash)]
 pub struct ChessMove {
     source: Square,
     dest: Square,
@@ -24,9 +24,9 @@ impl ChessMove {
     #[inline]
     pub fn new(source: Square, dest: Square, promotion: Option<Piece>) -> ChessMove {
         ChessMove {
-            source: source,
-            dest: dest,
-            promotion: promotion,
+            source,
+            dest,
+            promotion,
         }
     }
 
@@ -70,7 +70,7 @@ impl ChessMove {
                 Square::make_square(rank, dest_file),
                 None,
             );
-            if MoveGen::new_legal(&board).any(|l| l == m) {
+            if MoveGen::new_legal(board).any(|l| l == m) {
                 return Ok(m);
             } else {
                 return Err(Error::InvalidSanMove);
@@ -234,14 +234,9 @@ impl ChessMove {
             _ => None,
         };
 
-        let takes = if let Some(s) = move_text.get(cur_index..(cur_index + 1)) {
-            match s {
-                "x" => {
-                    cur_index += 1;
-                    true
-                }
-                _ => false,
-            }
+        let takes = if let Some("x") = move_text.get(cur_index..(cur_index + 1)) {
+            cur_index += 1;
+            true
         } else {
             false
         };
@@ -353,16 +348,12 @@ impl ChessMove {
             }
 
             // takes is complicated, because of e.p.
-            if !takes {
-                if board.piece_on(m.get_dest()).is_some() {
-                    continue;
-                }
+            if !takes && board.piece_on(m.get_dest()).is_some() {
+                continue;
             }
 
-            if !ep && takes {
-                if board.piece_on(m.get_dest()).is_none() {
-                    continue;
-                }
+            if !ep && takes && board.piece_on(m.get_dest()).is_none() {
+                continue;
             }
 
             found_move = Some(m);
@@ -378,6 +369,12 @@ impl fmt::Display for ChessMove {
             None => write!(f, "{}{}", self.source, self.dest),
             Some(x) => write!(f, "{}{}{}", self.source, self.dest, x),
         }
+    }
+}
+
+impl PartialOrd for ChessMove {
+    fn partial_cmp(&self, other: &ChessMove) -> Option<Ordering> {
+        Some(self.cmp(other))
     }
 }
 
